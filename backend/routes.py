@@ -7,6 +7,8 @@ SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 json_url = os.path.join(SITE_ROOT, "data", "pictures.json")
 data: list = json.load(open(json_url))
 
+
+
 ######################################################################
 # RETURN HEALTH OF THE APP
 ######################################################################
@@ -35,7 +37,7 @@ def count():
 ######################################################################
 @app.route("/picture", methods=["GET"])
 def get_pictures():
-    pass
+    return jsonify(data), 200 
 
 ######################################################################
 # GET A PICTURE
@@ -44,7 +46,14 @@ def get_pictures():
 
 @app.route("/picture/<int:id>", methods=["GET"])
 def get_picture_by_id(id):
-    pass
+
+    for dic in data: 
+        if dic["id"] == id: 
+            return jsonify(dic), 200 
+    
+    return jsonify({"message":'No valid number'}), 404
+
+    
 
 
 ######################################################################
@@ -52,7 +61,16 @@ def get_picture_by_id(id):
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    pass
+    
+    userData = request.get_json()
+    for dic in data: 
+        if dic['id'] == userData['id']: 
+            return jsonify({"Message": f"image avec id {userData['id']} lloralo"}), 302
+    
+    data.append(userData)
+    return jsonify({'message':'ok, created'}), 201 
+
+    
 
 ######################################################################
 # UPDATE A PICTURE
