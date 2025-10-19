@@ -65,6 +65,7 @@ def create_picture():
     userData = request.get_json()
     for dic in data: 
         if dic['id'] == userData['id']: 
+            userData['Message'] = f"picture with id {userData['id']} already present"
             return jsonify(userData), 302
     
     data.append(userData)
@@ -77,9 +78,15 @@ def create_picture():
 ######################################################################
 
 
-@app.route("/picture/<int:id>", methods=["PUT"])
-def update_picture(id):
-    pass
+    @app.route("/picture/<int:id>", methods=["PUT"])
+    def update_picture(id):
+        userData = request.get_json()
+        for dic in data: 
+            if dic['id'] == id: 
+                dic["event_state"] = userData["event_state"]
+                return jsonify(dic), 200  
+        userData['message'] = 'picture not found'
+        return jsonify(userData), 404   
 
 ######################################################################
 # DELETE A PICTURE
