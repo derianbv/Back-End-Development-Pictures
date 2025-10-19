@@ -67,8 +67,10 @@ def create_picture():
         if dic['id'] == userData['id']: 
             userData['Message'] = f"picture with id {userData['id']} already present"
             return jsonify(userData), 302
-    
+
     data.append(userData)
+    with open(json_url, 'w') as a: 
+        json.dump(data, a)    
     return jsonify(userData), 201 
 
     
@@ -78,19 +80,28 @@ def create_picture():
 ######################################################################
 
 
-    @app.route("/picture/<int:id>", methods=["PUT"])
-    def update_picture(id):
-        userData = request.get_json()
-        for dic in data: 
-            if dic['id'] == id: 
-                dic["event_state"] = userData["event_state"]
-                return jsonify(dic), 200  
-        userData['message'] = 'picture not found'
-        return jsonify(userData), 404   
+@app.route("/picture/<int:id>", methods=["PUT"])
+def update_picture(id):
+    userData = request.get_json()
+    for dic in data: 
+        if dic['id'] == id: 
+            dic["event_state"] = userData["event_state"]
+            # Guardar cambios en el archivo
+            with open(json_url, 'w') as f:
+                json.dump(data, f)
+            return jsonify(dic), 200  
+    userData['message'] = 'picture not found'
+    return jsonify(userData), 404  
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+    for dic in data: 
+        if dic['id'] == id: 
+            data.remove(dic)
+            with open(json_url, 'w') as a: 
+                json.dump(data, a)
+            return '', 204  # ← El return aquí sale del loop automáticamente
+    return jsonify({"message": "picture not found"}), 404
