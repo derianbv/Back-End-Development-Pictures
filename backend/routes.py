@@ -65,10 +65,10 @@ def create_picture():
     userData = request.get_json()
     for dic in data: 
         if dic['id'] == userData['id']: 
-            return jsonify({"Message": f"image avec id {userData['id']} lloralo"}), 302
+            return jsonify(userData), 302
     
     data.append(userData)
-    return jsonify({'message':'ok, created'}), 201 
+    return jsonify(userData), 201 
 
     
 
